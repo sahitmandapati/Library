@@ -14,7 +14,7 @@ namespace Library.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Book> GetAllBooks()
+        public IEnumerable<Book> GetAllBooks([FromQuery] Genre? Genre = null)
         {
             List<Book> books = new List<Book>();
             var reader = new StreamReader(_csvFilePath);
@@ -30,14 +30,21 @@ namespace Library.Controllers
                         {
                             Title = values[0],
                             Author = values[1],
-                            YearPublished = Convert.ToInt32(values[2])
+                            Genre = (Genre)Enum.Parse(typeof(Genre), values[2]),
+                            YearPublished = Convert.ToInt32(values[3])
                         });
                     }
 
                 }
-            
 
-            return books;
+            if (Genre != null)
+            {
+                return books.Where(item => item.Genre == Genre);
+            }
+            else
+            {
+                return books;
+            }
         }
     }
 }
